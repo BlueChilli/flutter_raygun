@@ -30,14 +30,24 @@ public class SwiftRaygunPlugin: NSObject, FlutterPlugin, RaygunOnBeforeSendDeleg
     let bundleId = mainBundle.object(forInfoDictionaryKey: "CFBundleIdentifier") as? String
     let appVersion = mainBundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
     let buildNumber = mainBundle.object(forInfoDictionaryKey: "CFBundleVersion") as? String
+    let appdata = [
+        "appName": appName ?? "",
+        "bundleId": bundleId ?? "",
+        "appVersion": appVersion ?? "",
+        "buildNumber": buildNumber ?? "",
+        ];
     
-    message.details.userCustomData = [
-        "appName": appName ?? NSNull(),
-        "bundleId": bundleId ?? NSNull(),
-        "appVersion": appVersion ?? NSNull(),
-        "buildNumber": buildNumber ?? NSNull(),
-    ];
-    
+    if(message.details.userCustomData != nil) {
+        let stacktrace = message.details.userCustomData["stacktraces"] as? [Any];
+        let errorMessage = message.details.error;
+        message.details.error.stackTrace = stacktrace;
+        message.details.userCustomData = message.details.userCustomData.merging(appdata, uniquingKeysWith: { (item1:Any, item2:Any) -> Any in
+            return item1
+        })
+    }
+    else {
+        message.details.userCustomData = appdata;
+    }
     
     return true;
   }
@@ -93,8 +103,8 @@ public class SwiftRaygunPlugin: NSObject, FlutterPlugin, RaygunOnBeforeSendDeleg
             let message = exception["message"] as? String
             let traces = exception["trace"] as? Array<Dictionary<String, Any>>
             let forceCrash = exception["forceCrash"] as? Bool ?? false
-            let tags = exception["tags"] as? Array<String> ?? [];
-            let data = exception["data"] as? Dictionary<String, Any>
+            let tags = exception["tags"] as? Array<String> ?? []
+            let data = exception["data"] as? Dictionary<String, Any> ?? [:]
             let stacks = buildStackTrace(traces: traces)
             
             if(forceCrash) {
@@ -102,7 +112,11 @@ public class SwiftRaygunPlugin: NSObject, FlutterPlugin, RaygunOnBeforeSendDeleg
             }
             else {
                 let ex = FlutterException(name: NSExceptionName(rawValue: cause ?? "Flutter Error"), reason: message, frameArray: stacks)
-                raygun.send(ex, withTags:tags, withUserCustomData: data);
+                let merged = data.merging(["stacktraces": ex.callStackSymbols]) { (item1:Any, item2:Any) -> Any in
+                    return item1;
+                }
+                
+                raygun.send(ex, withTags:tags, withUserCustomData: merged);
             }
             result(nil)
             break
@@ -168,6 +182,7 @@ class FlutterException: NSException, Error {
         })
     }
     
+    
 }
 
 class FlutterStackFrame: NSObject {
@@ -190,6 +205,8 @@ class FlutterStackFrame: NSObject {
         self.lineNumber = 0;
         self.offset = 0;
         self.address = 0;
+        
+       
     }
     
     var symbol: String;
@@ -199,4 +216,10 @@ class FlutterStackFrame: NSObject {
     var lineNumber:UInt32;
     var offset:UInt64;
     var address:UInt64;
+    
+    override var description: String {
+        return "\(self.symbol) lib:\(self.library) (\(self.fileName)) line: \(self.lineNumber)"
+    }
+    
+
 }
