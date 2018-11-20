@@ -39,7 +39,6 @@ public class SwiftRaygunPlugin: NSObject, FlutterPlugin, RaygunOnBeforeSendDeleg
     
     if(message.details.userCustomData != nil) {
         let stacktrace = message.details.userCustomData["stacktraces"] as? [Any];
-        let errorMessage = message.details.error;
         message.details.error.stackTrace = stacktrace;
         message.details.userCustomData = message.details.userCustomData.merging(appdata, uniquingKeysWith: { (item1:Any, item2:Any) -> Any in
             return item1
