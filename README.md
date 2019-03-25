@@ -1,10 +1,41 @@
 # raygun
 
-A new flutter plugin project.
+## iOS configuration
 
-## Getting Started
+nothing to be done
 
-For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
+## Android configuration
 
-For help on editing plugin code, view the [documentation](https://flutter.io/developing-packages/#edit-plugin-package).
+add below to AndroidManifest.xml
+
+```xml
+ <service   android:name="main.java.com.mindscapehq.android.raygun4android.RaygunPostService"
+           android:exported="false"
+           android:process=":raygunpostservice"/>
+```
+
+## Usage
+
+### Setup
+
+setup Api Key
+
+```dart
+FlutterRaygun().initialize('Raygun Api Key here')
+```
+
+### Log Exception
+
+Log exception to raygun
+
+```dart
+FlutterRaygun().logException(exception, stacktrace)
+```
+
+### Log
+
+Log to raygun
+
+```dart
+FlutterRaygun().log("log here" send: true, tags:["tag1", "tag2"])
+```

@@ -5,13 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:raygun/raygun.dart';
 
 void main() async {
-  bool isInDebugMode = false;
-  profile(() {
-    isInDebugMode = true;
-  });
-
   FlutterError.onError = (FlutterErrorDetails details) {
-    if (!isInDebugMode) {
+    if (!kReleaseMode) {
       // In development mode simply print to console.
       FlutterError.dumpErrorToConsole(details);
     } else {
@@ -23,7 +18,8 @@ void main() async {
 
   bool optIn = true;
   if (optIn) {
-    await FlutterRaygun().initialize('LdG17EB/6i21JTKqBhD+ww==');
+    //await FlutterRaygun().initialize('LdG17EB/6i21JTKqBhD+ww==');
+    await FlutterRaygun().initialize('7fIIRatS5AGaIM9+n2hhbQ==');
   } else {
     // In this case Raygun won't send any reports.
     // Usually handling opt in/out is required by the Privacy Regulations
