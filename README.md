@@ -1,5 +1,8 @@
 # raygun
 
+This is written in swift
+when you create the flutter project use -i swift option
+
 ## iOS configuration
 
 nothing to be done
