@@ -45,8 +45,11 @@ public class SwiftRaygunPlugin: NSObject, FlutterPlugin, RaygunOnBeforeSendDeleg
         message.details.userCustomData = message.details.userCustomData.merging(appdata, uniquingKeysWith: { (item1:Any, item2:Any) -> Any in
             return item1
         })
+        
+        Log(msg: "%@: %@", [Tag, "onBoforeSend - attaching custom data"])
     }
     else {
+        Log(msg: "%@: %@", [Tag, "onBoforeSend - attaching app data"])
         message.details.userCustomData = appdata;
     }
     
@@ -90,7 +93,7 @@ public class SwiftRaygunPlugin: NSObject, FlutterPlugin, RaygunOnBeforeSendDeleg
         } else if(isRaygunInitialized) {
             onInitialisedMethodCall(call, result: result)
         } else {
-            Log(msg: "%@: %@ %@", [Tag, "Raygun is not initialized", raygunApiKey!])
+            Log(msg: "%@: %@", [Tag, "Raygun is not initialized"])
             // Should not result in an error. Otherwise Opt Out clients would need to handle errors
             result(nil)
         }
@@ -99,6 +102,7 @@ public class SwiftRaygunPlugin: NSObject, FlutterPlugin, RaygunOnBeforeSendDeleg
     private func onInitialisedMethodCall(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         Log(msg: "%@: ApiKey is %@", [Tag, raygunApiKey!])
         let raygun = Raygun.sharedReporter() as! Raygun;
+        raygun.onBeforeSendDelegate = self;
         switch call.method {
         case "reportCrash":
             let exception = (call.arguments as! Dictionary<String, Any>)
