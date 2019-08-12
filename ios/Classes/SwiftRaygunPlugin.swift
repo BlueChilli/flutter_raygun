@@ -100,9 +100,7 @@ public class SwiftRaygunPlugin: NSObject, FlutterPlugin, RaygunOnBeforeSendDeleg
     }
   
     private func onInitialisedMethodCall(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-        Log(msg: "%@: ApiKey is %@", [Tag, raygunApiKey!])
         let raygun = Raygun.sharedReporter() as! Raygun;
-        raygun.onBeforeSendDelegate = self;
         switch call.method {
         case "reportCrash":
             let exception = (call.arguments as! Dictionary<String, Any>)
