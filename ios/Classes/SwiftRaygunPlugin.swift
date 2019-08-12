@@ -15,6 +15,8 @@ func Log(msg: String, _ args:[CVarArg] = [])
 public class SwiftRaygunPlugin: NSObject, FlutterPlugin, RaygunOnBeforeSendDelegate {
     
   var isRaygunInitialized = false
+  var raygunApiKey:String?
+  let Tag: String = "FlutterRaygun"
     
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "flutter_raygun", binaryMessenger: registrar.messenger())
@@ -81,12 +83,14 @@ public class SwiftRaygunPlugin: NSObject, FlutterPlugin, RaygunOnBeforeSendDeleg
                 raygun.attachPulse(withNetworkLogging: networkLogging);
             }
             raygun.onBeforeSendDelegate = self;
-            
+            raygunApiKey = apikey;
             isRaygunInitialized = true;
+            Log(msg: "%@: %@ %@", [Tag, "Raygun is initialized", raygunApiKey!])
             result(nil)
         } else if(isRaygunInitialized) {
             onInitialisedMethodCall(call, result: result)
         } else {
+             Log(msg: "%@: %@ %@", [Tag, "Raygun is not initialized", raygunApiKey!])
             // Should not result in an error. Otherwise Opt Out clients would need to handle errors
             result(nil)
         }
@@ -116,6 +120,8 @@ public class SwiftRaygunPlugin: NSObject, FlutterPlugin, RaygunOnBeforeSendDeleg
                 }
                 
                 raygun.send(ex, withTags:tags, withUserCustomData: merged);
+                
+                Log(msg: "%@: %@", [Tag, "Exception has been sent"])
             }
             result(nil)
             break
@@ -126,10 +132,11 @@ public class SwiftRaygunPlugin: NSObject, FlutterPlugin, RaygunOnBeforeSendDeleg
             let tags = info["tags"] as? Array<String> ?? []
            
             if(send) {
+              Log(msg: "%@: %@ has been sent to Raygun", ["FlutterRaygun", msg!])
               raygun.send("Log", withReason:msg, withTags: tags, withUserCustomData: nil)
             }
 
-            Log(msg: "%@: %@ %@", ["FlutterRaygun", msg!])
+            Log(msg: "%@: %@ %@", [Tag, msg!])
             result(nil)
             break
         case "setInfo":
@@ -152,9 +159,9 @@ public class SwiftRaygunPlugin: NSObject, FlutterPlugin, RaygunOnBeforeSendDeleg
     }
     
     func crash(_ cause: String, reason: String, frameArray: Array<FlutterStackFrame>) throws{
-        Log(msg: "%@ %@", [cause, reason])
+        Log(msg: "%@: %@ %@", [Tag, cause, reason])
         frameArray.forEach { (line) in
-            Log(msg: "%@", [line.description])
+            Log(msg: "%@: %@", [Tag, line.description])
         }
         let ex = FlutterException(name: NSExceptionName(rawValue: cause), reason: reason, frameArray: frameArray)
         
