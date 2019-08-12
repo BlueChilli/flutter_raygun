@@ -90,15 +90,15 @@ public class SwiftRaygunPlugin: NSObject, FlutterPlugin, RaygunOnBeforeSendDeleg
         } else if(isRaygunInitialized) {
             onInitialisedMethodCall(call, result: result)
         } else {
-             Log(msg: "%@: %@ %@", [Tag, "Raygun is not initialized", raygunApiKey!])
+            Log(msg: "%@: %@ %@", [Tag, "Raygun is not initialized", raygunApiKey!])
             // Should not result in an error. Otherwise Opt Out clients would need to handle errors
             result(nil)
         }
     }
   
     private func onInitialisedMethodCall(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-        let raygun = Raygun.sharedReporter() as! Raygun
-        
+        let raygun = Raygun.sharedReporter(withApiKey: raygunApiKey, withCrashReporting: true) as! Raygun;
+
         switch call.method {
         case "reportCrash":
             let exception = (call.arguments as! Dictionary<String, Any>)
@@ -132,11 +132,13 @@ public class SwiftRaygunPlugin: NSObject, FlutterPlugin, RaygunOnBeforeSendDeleg
             let tags = info["tags"] as? Array<String> ?? []
            
             if(send) {
-              Log(msg: "%@: %@ has been sent to Raygun", ["FlutterRaygun", msg!])
               raygun.send("Log", withReason:msg, withTags: tags, withUserCustomData: nil)
+              Log(msg: "%@: %@ has been sent to Raygun", ["FlutterRaygun", msg!])
+            }
+            else {
+              Log(msg: "%@: %@", [Tag, msg!])
             }
 
-            Log(msg: "%@: %@ %@", [Tag, msg!])
             result(nil)
             break
         case "setInfo":
