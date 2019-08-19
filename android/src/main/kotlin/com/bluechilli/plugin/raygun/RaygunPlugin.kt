@@ -7,12 +7,8 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.PluginRegistry.Registrar
-import main.java.com.mindscapehq.android.raygun4android.messages.RaygunMessage
 import main.java.com.mindscapehq.android.raygun4android.messages.RaygunUserInfo
 import main.java.com.mindscapehq.android.raygun4android.RaygunClient
-import android.content.pm.PackageManager
-import main.java.com.mindscapehq.android.raygun4android.RaygunOnBeforeSend
-
 
 
 class RaygunPlugin(private val context: Activity): MethodCallHandler {
@@ -85,6 +81,7 @@ class RaygunPlugin(private val context: Activity): MethodCallHandler {
         result.success(null)
       }
       call.method == "setInfo" -> {
+
         val info = call.arguments as Map<String, Any>
         RaygunClient.setUserCustomData(info)
         result.success(null)

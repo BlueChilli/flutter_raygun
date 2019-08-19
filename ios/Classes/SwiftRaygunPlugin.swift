@@ -134,8 +134,9 @@ public class SwiftRaygunPlugin: NSObject, FlutterPlugin, RaygunOnBeforeSendDeleg
             let tags = info["tags"] as? Array<String> ?? []
            
             if(send) {
-              raygun.send("Log", withReason:msg, withTags: tags, withUserCustomData: nil)
-              Log(msg: "%@: %@ has been sent to Raygun", ["FlutterRaygun", msg!])
+                let finalTags: Array<String> = [Tag, "Log"] + tags
+                raygun.send("FlutterRaygunLog", withReason:msg, withTags: finalTags, withUserCustomData: nil)
+              Log(msg: "%@: %@ has been sent to Raygun", [Tag, msg!])
             }
             else {
               Log(msg: "%@: %@", [Tag, msg!])
