@@ -13,13 +13,13 @@ A new flutter plugin project.
   s.author           = { 'BlueChilli' => 'hello@bluechilli.com' }
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
-  s.public_header_files = 'Classes/**/*.h'
+  #s.public_header_files = 'Classes/**/*.h'
   s.static_framework = true
   s.dependency 'Flutter'
   s.dependency 'Raygun4iOS'
 
   s.ios.deployment_target = '8.0'
-  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'VALID_ARCHS[sdk=iphonesimulator*]' => 'x86_64' }
-  s.swift_versions = ['4.0', '4.2', '5.0', '5.1'] 
+  s.swift_version = '5.0'
+  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
 end
 
