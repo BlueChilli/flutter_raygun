@@ -19,5 +19,6 @@ A new flutter plugin project.
   s.dependency 'Raygun4iOS'
 
   s.ios.deployment_target = '8.0'
+  s.swift_versions = ['4.0', '4.2', '5.0'] 
 end
 
