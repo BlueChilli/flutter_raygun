@@ -1,11 +1,11 @@
 name: raygun
 description: plugin for log exception to raygun
-version: 0.0.2
+version: 0.0.3
 author:
 homepage:
 
 environment:
-  sdk: ">=2.0.0-dev.68.0 <3.0.0"
+  sdk: ">=2.0.0 <3.0.0"
 
 dependencies:
   stack_trace: ^1.9.3
