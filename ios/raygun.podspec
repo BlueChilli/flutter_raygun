@@ -19,7 +19,6 @@ A new flutter plugin project.
   s.dependency 'Raygun4iOS'
 
   s.ios.deployment_target = '8.0'
-  s.swift_version = '5.0'
-  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
+
 end
 
